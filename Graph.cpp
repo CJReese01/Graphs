@@ -4,31 +4,32 @@
 
 const int MAXCONNECTIONS = 5;
 struct Node{
-    Node *connected[MAXCONNECTIONS] = {NULL,NULL,NULL,NULL,NULL};
-    int weights[MAXCONNECTIONS] = {0,0,0,0,0};
+    Node *connected[MAXCONNECTIONS] = {NULL,NULL,NULL,NULL,NULL}; //initialize a set of nodes that can be connected
+    int weights[MAXCONNECTIONS] = {0,0,0,0,0}; //initialize a set of weights to tie to the connections
 };
 
 class Graph{
     private:
-        Node* curent;
+        Node* curent; //track the last used node so you can't lose the graph so easy
     public:
         Graph(){
-            curent = NULL;
+            curent = NULL; // initialize the starting Node a NULL to check for empty graphs
         }
-        void insertNode(int *weight, int numArgs, ...){
-            va_list valist;
-            Node *new_node = new Node;
-            va_start(valist,numArgs);
-            Node *temp;
-            for(int i=0;i<numArgs;i++){
-                if(i>=MAXCONNECTIONS){
+        void insertNode(int *weight, int numArgs, ...){ //if someone can think of a better way to attach connections and weights then it is welcome
+            if(numArgs>=MAXCONNECTIONS){ //Check to make sure that this node can be supported
                     std::cout<<"overflow on number of connections allowed ("<<MAXCONNECTIONS<<")"<<std::endl;
-                    break;
+                    return;
                 }
-                temp = va_arg(valist,Node*);
-                new_node->connected[i] = temp;
-                new_node->weights[i] = weight[i];
-                for(int j=0;j<MAXCONNECTIONS;j++){
+            va_list valist; // enables the input of multiple arguments
+            Node *new_node = new Node; // creates the new node
+            va_start(valist,numArgs); // initializes the iterator for the variable arguments
+            Node *temp; //holds the curent variable argument
+            for(int i=0;i<numArgs;i++){
+
+                temp = va_arg(valist,Node*); //sets the curent variable argument
+                new_node->connected[i] = temp; //add the connection to the new node
+                new_node->weights[i] = weight[i]; // add the weight to the connection
+                for(int j=0;j<MAXCONNECTIONS;j++){ // add the connection to the attached node for double connection 
                     if(temp->connected[j]==NULL){
                         temp->connected[j] = new_node;
                         temp->weights[j] = weight[i];
@@ -36,8 +37,8 @@ class Graph{
                     }
                 }
             }
-            va_end(valist);
-            curent = new_node;
+            va_end(valist); // deconstruct the variable argument array
+            curent = new_node; //update the curent node
         }
         Node* get_curent(){
             return curent;
@@ -48,17 +49,25 @@ class Graph{
 main(){
     int weights[MAXCONNECTIONS]={6};
     Graph graphy;
+
+    //check for inserting a new node
     graphy.insertNode(0,0);
     std::cout<<"first: "<<graphy.get_curent()<< " weight: "<< graphy.get_curent()->weights[0] << std::endl;
-    Node *head = graphy.get_curent();
-    std::cout << "Connection check:" << ((head->connected[0]==NULL) ? "Success":"Fail") << std::endl;
-    graphy.insertNode(weights,1,head);
+    Node *first = graphy.get_curent();
+    std::cout << "Connection check:" << ((first->connected[0]==NULL) ? "Success":"Fail") << std::endl;
+    
+    //check for attaching a node to the previous node
+    graphy.insertNode(weights,1,first);
     std::cout<<"second: "<<graphy.get_curent() << " weight: "<< graphy.get_curent()->weights[0] << std::endl;
-    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==head) ? "Success":"Fail") << std::endl;
+    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==first) ? "Success":"Fail") << std::endl;
+    
+    //check for attaching a node to both the previous nodes
+    Node *second = graphy.get_curent();
     weights[0] = 5;
     weights[1] = 4;
-    graphy.insertNode(weights,2,head,graphy.get_curent());
+    graphy.insertNode(weights,2,first,graphy.get_curent());
     std::cout<<"third: "<<graphy.get_curent() << " weight: "<< graphy.get_curent()->weights[0] << ", " << graphy.get_curent()->weights[1] << std::endl;
-    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==head) ? "Success":"Fail") << std::endl;
+    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==first) ? "Success":"Fail") << std::endl;
+    std::cout << "Connection check:" << ((graphy.get_curent()->connected[1]==second) ? "Success":"Fail") << std::endl;
     return 0;
 }
