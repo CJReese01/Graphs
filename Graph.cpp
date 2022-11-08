@@ -10,10 +10,18 @@ struct Node{
 
 class Graph{
     private:
-        Node* curent; //track the last used node so you can't lose the graph so easy
+        Node* curent = NULL; //track the last used node so you can't lose the graph so easy
+        int adjacentIndex=0;
+       
+        void addAdjacentcy(Node* node1, Node* node2){
+            adjacent[adjacentIndex][0] = node1;
+            adjacent[adjacentIndex][1] = node2;
+            adjacentIndex++;
+        }
     public:
-        Graph(){
-            curent = NULL; // initialize the starting Node a NULL to check for empty graphs
+        Node* adjacent[MAXCONNECTIONS*10][2] = {0}; // adjacenty list
+        int adjacentSize(){
+            return adjacentIndex;
         }
         void insertNode(int *weight, int numArgs, ...){ //if someone can think of a better way to attach connections and weights then it is welcome
             if(numArgs>=MAXCONNECTIONS){ //Check to make sure that this node can be supported
@@ -29,6 +37,7 @@ class Graph{
                 temp = va_arg(valist,Node*); //sets the curent variable argument
                 new_node->connected[i] = temp; //add the connection to the new node
                 new_node->weights[i] = weight[i]; // add the weight to the connection
+                addAdjacentcy(new_node,temp); // updates the adjacency list
                 for(int j=0;j<MAXCONNECTIONS;j++){ // add the connection to the attached node for double connection 
                     if(temp->connected[j]==NULL){
                         temp->connected[j] = new_node;
@@ -43,6 +52,7 @@ class Graph{
         Node* get_curent(){
             return curent;
         }
+        
 
 };
 
@@ -67,7 +77,13 @@ main(){
     weights[1] = 4;
     graphy.insertNode(weights,2,first,graphy.get_curent());
     std::cout<<"third: "<<graphy.get_curent() << " weight: "<< graphy.get_curent()->weights[0] << ", " << graphy.get_curent()->weights[1] << std::endl;
-    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==first) ? "Success":"Fail") << std::endl;
-    std::cout << "Connection check:" << ((graphy.get_curent()->connected[1]==second) ? "Success":"Fail") << std::endl;
+    std::cout << "Connection check:" << ((graphy.get_curent()->connected[0]==first)&(graphy.get_curent()->connected[1]==second) ? "Success":"Fail") << std::endl;
+    
+    //adjacentcy
+    std::cout<<"adjacentcy list" << std::endl;
+    for(int i=0;i<graphy.adjacentSize();i++){
+        std::cout << graphy.adjacent[i][0] << "-" << graphy.adjacent[i][1] << ", ";
+    }
+
     return 0;
 }
