@@ -4,8 +4,8 @@
 
 const int MAXCONNECTIONS = 5;
 struct Node{
-    Node *connected[MAXCONNECTIONS] = {NULL,NULL,NULL,NULL,NULL}; //initialize a set of nodes that can be connected
-    int weights[MAXCONNECTIONS] = {0,0,0,0,0}; //initialize a set of weights to tie to the connections
+    Node *connected[MAXCONNECTIONS] = {NULL}; //initialize a set of nodes that can be connected
+    int weights[MAXCONNECTIONS] = {0}; //initialize a set of weights to tie to the connections
 };
 
 class Graph{
