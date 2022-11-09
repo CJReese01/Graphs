@@ -19,6 +19,7 @@ class Graph{
         int nodeSize(){
             return nodeIndex;
         }
+
         void addNode(std::string name){
             Node *new_node = new Node;
             new_node->name = name;
@@ -40,6 +41,26 @@ class Graph{
                     node2->weights[i] = weight;
                 break;
                 }
+            }
+        }
+        void removeEdge(Node *node1, Node *node2){
+            int index = 0;
+            for(;index<MAXCONNECTIONS;index++){ // add the connection to the attached node for double connection 
+                if(node1->connected[index]==NULL){
+                    break;
+                }
+            }
+            for(;index<MAXCONNECTIONS-1;index++){ // add the connection to the attached node for double connection 
+                node1->connected[index] = node1->connected[index+1];
+            }
+            index = 0;
+            for(;index<MAXCONNECTIONS;index++){ // add the connection to the attached node for double connection 
+                if(node2->connected[index]==NULL){
+                    break;
+                }
+            }
+            for(;index<MAXCONNECTIONS-1;index++){ // add the connection to the attached node for double connection 
+                node2->connected[index] = node2->connected[index+1];
             }
         }
         void insertNode(std::string name, int *weight, int numArgs, ...){ //if someone can think of a better way to attach connections and weights then it is welcome
