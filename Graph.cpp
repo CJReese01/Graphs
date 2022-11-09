@@ -6,6 +6,7 @@ const int MAXCONNECTIONS = 5;
 struct Node{
     Node *connected[MAXCONNECTIONS] = {NULL}; //initialize a set of nodes that can be connected
     int weights[MAXCONNECTIONS] = {0}; //initialize a set of weights to tie to the connections
+    std::string name;
 };
 
 class Graph{
@@ -49,6 +50,7 @@ class Graph{
             va_end(valist); // deconstruct the variable argument array
             curent = new_node; //update the curent node
         }
+
         Node* get_curent(){
             return curent;
         }
@@ -57,9 +59,8 @@ class Graph{
 };
 
 main(){
-    int weights[MAXCONNECTIONS]={6};
+    int weights[MAXCONNECTIONS]={6,4,5,6,7};
     Graph graphy;
-
     //check for inserting a new node
     graphy.insertNode(0,0);
     std::cout<<"first: "<<graphy.get_curent()<< " weight: "<< graphy.get_curent()->weights[0] << std::endl;
