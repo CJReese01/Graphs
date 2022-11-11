@@ -20,13 +20,6 @@ class Graph{
             return nodeIndex;
         }
 
-        void addNode(std::string name){
-            Node *new_node = new Node;
-            new_node->name = name;
-            nodes[nodeIndex] = new_node;
-            nodeIndex++;
-            curent = new_node;
-        }
         void addEdge(Node *node1, Node *node2, int weight){
             for(int i=0;i<MAXCONNECTIONS;i++){ // add the connection to the attached node for double connection 
                 if(node1->connected[i]==NULL){
@@ -38,6 +31,20 @@ class Graph{
             for(int i=0;i<MAXCONNECTIONS;i++){ // add the connection to the attached node for double connection 
                 if(node2->connected[i]==NULL){
                     node2->connected[i] = node1;
+                    node2->weights[i] = weight;
+                break;
+                }
+            }
+        }
+        void modifyEdge(Node *node1, Node *node2, int weight){
+            for(int i=0;i<MAXCONNECTIONS;i++){ // add the connection to the attached node for double connection 
+                if(node1->connected[i]==node2){
+                    node1->weights[i] = weight;
+                break;
+                }
+            }
+            for(int i=0;i<MAXCONNECTIONS;i++){ // add the connection to the attached node for double connection 
+                if(node2->connected[i]==node1){
                     node2->weights[i] = weight;
                 break;
                 }
@@ -63,6 +70,15 @@ class Graph{
                 node2->connected[index] = node2->connected[index+1];
             }
         }
+
+        void addNode(std::string name){
+            Node *new_node = new Node;
+            new_node->name = name;
+            nodes[nodeIndex] = new_node;
+            nodeIndex++;
+            curent = new_node;
+        }
+
         void insertNode(std::string name, int *weight, int numArgs, ...){ //if someone can think of a better way to attach connections and weights then it is welcome
             if(numArgs>=MAXCONNECTIONS){ //Check to make sure that this node can be supported
                     std::cout<<"overflow on number of connections allowed ("<<MAXCONNECTIONS<<")"<<std::endl;
@@ -124,7 +140,9 @@ class Graph{
                 std::cout<<std::endl;
             }
         }
-
+        void path(Node *node1, Node *node2, Node **nodeArray){
+            
+        }
 };
 
 main(){
