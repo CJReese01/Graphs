@@ -1,12 +1,14 @@
 //https://courses.fortlewis.edu/courses/25275/assignments/422414
 #include<iostream>
 #include <cstdarg>
+#include <stack>
 
 const int MAXCONNECTIONS = 5;
 struct Node{
     Node *connected[MAXCONNECTIONS] = {NULL}; //initialize a set of nodes that can be connected
     int weights[MAXCONNECTIONS] = {0}; //initialize a set of weights to tie to the connections
     std::string name;
+    int index;
 };
 
 class Graph{
@@ -75,6 +77,7 @@ class Graph{
             Node *new_node = new Node;
             new_node->name = name;
             nodes[nodeIndex] = new_node;
+            new_node->index=nodeIndex;
             nodeIndex++;
             curent = new_node;
         }
@@ -88,6 +91,7 @@ class Graph{
             Node *new_node = new Node; // creates the new node
             new_node->name = name;
             nodes[nodeIndex]=new_node;
+            new_node->index=nodeIndex;
             nodeIndex++;
             va_start(valist,numArgs); // initializes the iterator for the variable arguments
             Node *temp; //holds the curent variable argument
@@ -110,6 +114,7 @@ class Graph{
             nodeIndex--;
             for(;index<nodeIndex;index++){
                 nodes[index]=nodes[index+1];
+                node[index].index=index;
             }
             for(int i=0;i<MAXCONNECTIONS;i++){ // add the connection to the attached node for double connection 
                 if(node->connected[i] != NULL){
@@ -139,9 +144,31 @@ class Graph{
                 }
                 std::cout<<std::endl;
             }
+            std::cout<<std::endl;
         }
-        void path(Node *node1, Node *node2, Node **nodeArray){
-            
+
+        std::stack<Node*> DFS(Node *node1, Node *node2){
+            std::stack<Node*> path;
+            bool visited[nodeIndex] = {false};
+            path.push(node1);
+            visited[node1->index]=true;
+            while(path.top()!=node2){
+                for(int i=0; i<MAXCONNECTIONS; i++){
+                    if(path.top()->connected[i]==NULL){
+                        path.pop();
+                        break;
+                    }
+                    if(visited[path.top()->connected[i]->index]==true){
+                        continue;
+                    }
+                    else{
+                        path.push(path.top()->connected[i]);
+                        break;
+                    }
+                    
+                }
+            }
+            return path;
         }
 };
 
@@ -163,6 +190,13 @@ main(){
     graphy.insertNode("Aztec",weights,2,graphy.nodes[0],graphy.get_curent());
 
     graphy.display();
+    std::stack<Node*> path = graphy.DFS(graphy.nodes[0],graphy.nodes[2]);
+    while(!path.empty()){
+        std::cout<<path.top()->name<<std::endl;
+        path.pop();
+    }
+    std::cout<<std::endl;
+
     graphy.removeNode(graphy.get_curent());
     std::cout<<"Remove Aztec"<<std::endl;
     graphy.display();
