@@ -89,6 +89,8 @@ class Graph{
                 }
             va_list valist; // enables the input of multiple arguments
             Node *new_node = new Node; // creates the new node
+            
+            // addNode() here posssibly? I see the same function here
             new_node->name = name;
             nodes[nodeIndex]=new_node;
             new_node->index=nodeIndex;
